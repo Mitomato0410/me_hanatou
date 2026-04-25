@@ -1,35 +1,44 @@
 <!DOCTYPE html><html lang="zh-TW"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>☁️ 咩花糖的點歌系統 ♪</title>    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">    <script src="https://cdn.tailwindcss.com"></script>    <link rel="icon" href="icon.png" type="image/png">    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans TC', 'Poppins', sans-serif; background: linear-gradient(135deg, #F0F8FF 0%, #FFF0F5 100%); color: #6B5B95; min-height: 100vh; }
+        body { font-family: 'Noto Sans TC', 'Poppins', sans-serif; background: linear-gradient(135deg, #F0F9FF 0%, #FFF5F9 100%); color: #5A4A4A; min-height: 100vh; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        /* 頂部漸層：淺藍到淺粉 */
-        .header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #B9E2FA 0%, #FBCBF3 100%); border-radius: 0 0 30px 30px; box-shadow: 0 4px 20px rgba(185, 226, 250, 0.4); margin-bottom: 30px; }
-        .header h1 { font-size: 2.2rem; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .section-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; }
-        .search-input { width: 100%; padding: 12px 20px; border: 2px solid #E0F2FE; border-radius: 15px; margin-bottom: 15px; outline: none; transition: 0.3s; }
-        .search-input:focus { border-color: #B9E2FA; box-shadow: 0 0 10px rgba(185,226,250,0.3); }
+        .header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #B9E2FA 0%, #FFB6D9 100%); border-radius: 0 0 35px 35px; box-shadow: 0 6px 25px rgba(255, 182, 217, 0.3); margin-bottom: 30px; border-bottom: 2px solid #FFF; }
+        .header h1 { font-size: 2.2rem; font-weight: 700; color: #D4B5F0; text-shadow: 2px 2px 0px white, -2px -2px 0px white, 2px -2px 0px white, -2px 2px 0px white, 0 4px 6px rgba(0,0,0,0.1); }
+        .section-card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); margin-bottom: 25px; border: 1px solid #E0F2FE; }
+        .search-input { width: 100%; padding: 12px 20px; border: 2px solid #B9E2FA; border-radius: 18px; margin-bottom: 15px; outline: none; transition: 0.3s; background-color: #FDFDFD; }
+        .search-input:focus { border-color: #FFB6D9; box-shadow: 0 0 10px rgba(255,182,217,0.2); }
         .filter-btn { padding: 8px 18px; border: 2px solid #B9E2FA; background: white; color: #7AB8D9; border-radius: 25px; cursor: pointer; transition: all 0.3s; font-weight: 600; font-size: 0.9rem; }
-        .filter-btn.active { background: #B9E2FA; color: white; }
+        .filter-btn.active { background: #FFB6D9; color: white; border-color: #FFB6D9; }
         .songs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .song-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 2px solid transparent; transition: all 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
-        .song-card:hover { transform: translateY(-5px); border-color: #FBCBF3; }
-        .request-btn { width: 100%; padding: 12px; border: none; border-radius: 15px; background: linear-gradient(135deg, #B9E2FA 0%, #FBCBF3 100%); color: white; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; box-shadow: 0 4px 10px rgba(251, 203, 243, 0.4); }
-        .status-singing { background: #E0F2FE; color: #7AB8D9; animation: pulse 2s infinite; border-radius: 10px; padding: 4px 10px; font-weight: 600; }
+        .song-card { background: white; border-radius: 25px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.04); border: 2px solid transparent; transition: all 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
+        .song-card:hover { transform: translateY(-5px); border-color: #FFB6D9; }
+        .song-name { color: #7AB8D9; }
+        .request-btn { width: 100%; padding: 12px; border: none; border-radius: 18px; background: linear-gradient(135deg, #FFB6D9 0%, #D4B5F0 100%); color: white; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; box-shadow: 0 5px 15px rgba(212, 181, 240, 0.4); text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .request-btn:hover { filter: brightness(1.05); }
+        .status-singing { background: #E0F2FE; color: #FFB6D9; animation: pulse 2s infinite; border-radius: 12px; padding: 4px 12px; font-weight: 600; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 25px; padding: 30px; max-width: 450px; width: 90%; }
-        .form-input { width: 100%; padding: 14px; border: 2px solid #F0F9FF; border-radius: 15px; margin-top: 10px; outline: none; }
-        .tag-chip { padding: 6px 15px; border: 2px solid #F0F9FF; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: 0.3s; }
+        .modal-content { background: white; border-radius: 30px; padding: 35px; max-width: 480px; width: 90%; border: 3px solid #FBCBF3; }
+        
+        .form-input { width: 100%; padding: 14px; border: 2px solid #F0E8FF; border-radius: 18px; margin-top: 10px; outline: none; transition: 0.3s; }
+        .form-input:focus { border-color: #D4B5F0; }
+
+        .tag-chip { padding: 6px 15px; border: 2px solid #F0E8FF; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: 0.3s; color: #D4B5F0; }
         .tag-checkbox { display: none; }
-        .tag-checkbox:checked + .tag-chip { background: #FBCBF3; border-color: #FBCBF3; color: white; }
+        .tag-checkbox:checked + .tag-chip { background: #FFB6D9; border-color: #FFB6D9; color: white; }
+
         .mode-switch { position: fixed; bottom: 20px; left: 20px; z-index: 1000; opacity: 0.4; }
         .mode-btn { background: #6B5B95; color: white; padding: 10px 18px; border-radius: 50px; cursor: pointer; border: none; font-size: 0.8rem; }
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #7AB8D9; color: white; padding: 12px 30px; border-radius: 50px; display: none; z-index: 3000; }
-        .text-pink-400 { color: #FBCBF3 !important; }
-        .text-pink-300 { color: #B9E2FA !important; }
-        .bg-pink-50 { background-color: #F0F9FF !important; }
+
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #7AB8D9; color: white; padding: 12px 30px; border-radius: 50px; display: none; z-index: 3000; box-shadow: 0 4px 15px rgba(122, 184, 217, 0.4); }
+
+        .text-pink-400 { color: #FFB6D9 !important; }
+        .text-gray-400 { color: #9A8EB5 !important; } 
+        .bg-pink-50 { background-color: #FFF0F5 !important; }
+        .text-pink-300 { color: #FFB6D9 !important; }
     </style>
 </head>
 <body>
@@ -122,96 +131,64 @@
         </div>
     </div>
     <div id="toast" class="toast"></div>
+
     <script>
-        const firebaseConfig = {
-      apiKey: "AIzaSyC3kCYZt4goflbvOwLzQgafy_FueWSWnEw",
-      authDomain: "mehanatou.firebaseapp.com",
-      databaseURL: "https://mehanatou-default-rtdb.firebaseio.com",
-      projectId: "mehanatou",
-      storageBucket: "mehanatou.firebasestorage.app",
-      messagingSenderId: "403311169515",
-      appId: "1:403311169515:web:23d103c4a59cfbc86353ae",
-      measurementId: "G-CH5TWQTLMQ"
-    };
-            let filtered = songs.filter(s => !s.hidden);
-            if(currentFilter !== 'all') filtered = filtered.filter(s => s.tags && s.tags.includes(currentFilter));
-            if(searchQuery) { const q = searchQuery.toLowerCase(); filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || (s.artist && s.artist.toLowerCase().includes(q))); }
-            grid.innerHTML = filtered.map(s => `
-                <div class="song-card">
-                    <div>
-                        <div class="song-name font-bold" style="color:#7AB8D9">${s.name}</div>
-                        <div class="text-gray-400 text-sm mb-2">${s.artist || '未知歌手'}</div>
-                        <div class="flex gap-1 mb-2">${(s.tags || []).map(t => `<span class="px-2 py-0.5 bg-pink-50 text-pink-300 text-[10px] rounded-full">${t}</span>`).join('')}</div>
-                        <div class="text-[10px] text-gray-300">🎧 累計演唱：${s.count || 0} 次</div>
-                    </div>
-                    <button class="request-btn" onclick="openRequestModal('${s.id}')">就唱這首 ♪</button>
+        const firebaseConfig = { apiKey: "AIzaSyC3kCYZt4goflbvOwLzQgafy_FueWSWnEw", authDomain: "mehanatou.firebaseapp.com", databaseURL: "https://mehanatou-default-rtdb.firebaseio.com", projectId: "mehanatou", storageBucket: "mehanatou.firebasestorage.app", messagingSenderId: "403311169515", appId: "1:403311169515:web:23d103c4a59cfbc86353ae", measurementId: "G-CH5TWQTLMQ" };
+        firebase.initializeApp(firebaseConfig); const db = firebase.database();
+        let songs = []; let queue = []; let currentFilter = 'all'; let searchQuery = ''; let isManagementMode = false; let selectedSong = null;
+        db.ref('songs').on('value', snap => { const val = snap.val(); songs = val ? Object.keys(val).map(k => ({...val[k], id: k})) : []; render(); });
+        db.ref('queue').on('value', snap => { const val = snap.val(); queue = val ? Object.keys(val).map(k => ({...val[k], id: k})) : []; render(); });
+        function render() { renderAudienceSongs(); renderAudienceQueue(); renderDoneList(); if(isManagementMode) { renderAdminSongs(); renderAdminQueue(); } }
+        function renderAudienceSongs() { const grid = document.getElementById('songsGrid'); let filtered = songs.filter(s => !s.hidden); if(currentFilter !== 'all') filtered = filtered.filter(s => s.tags && s.tags.includes(currentFilter)); if(searchQuery) { const q = searchQuery.toLowerCase(); filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || (s.artist && s.artist.toLowerCase().includes(q))); } grid.innerHTML = filtered.map(s => `
+            <div class="song-card">
+                <div>
+                    <div class="song-name font-bold" style="color:#7AB8D9">${s.name}</div>
+                    <div class="text-gray-400 text-sm mb-2">${s.artist || '未知歌手'}</div>
+                    <div class="flex gap-1 mb-2">${(s.tags || []).map(t => `<span class="px-2 py-0.5 bg-pink-50 text-pink-300 text-[10px] rounded-full">${t}</span>`).join('')}</div>
+                    <div class="text-[10px] text-gray-300">🎧 累計演唱：${s.count || 0} 次</div>
                 </div>
-            `).join('');
-        }
-        function renderAudienceQueue() {
-            const list = document.getElementById('queueList');
-            const active = queue.filter(q => q.status !== 'completed');
-            if(active.length === 0) { list.innerHTML = "目前沒人在排隊唷，快來點一首！"; return; }
-            list.innerHTML = active.map((q, i) => `
-                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-50">
-                    <div>
-                        <span class="font-bold text-pink-300 mr-2">#${i+1}</span>
-                        <span class="font-medium">${q.songName}</span>
-                        <span class="text-xs text-gray-400 ml-2">by ${q.requester}</span>
-                    </div>
-                    <div class="${q.status==='singing' ? 'status-singing' : 'text-xs text-gray-300'}">
-                        ${q.status==='singing' ? '正在咩咩唱 🎤' : '等待中'}
-                    </div>
+                <button class="request-btn" onclick="openRequestModal('${s.id}')">點這首 ♪</button>
+            </div>
+        `).join(''); }
+        function renderAudienceQueue() { const list = document.getElementById('queueList'); const active = queue.filter(q => q.status !== 'completed'); if(active.length === 0) { list.innerHTML = "目前沒人在排隊唷，快來點一首！"; return; } list.innerHTML = active.map((q, i) => `
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-50">
+                <div>
+                    <span class="font-bold text-pink-300 mr-2">#${i+1}</span>
+                    <span class="font-medium">${q.songName}</span>
+                    <span class="text-xs text-gray-400 ml-2">by ${q.requester}</span>
                 </div>
-            `).join('');
-        }
-        function renderDoneList() {
-            const list = document.getElementById('doneList');
-            const done = queue.filter(q => q.status === 'completed');
-            if(done.length === 0) { list.innerHTML = "<div class='col-span-full'>今日尚未有演唱紀錄</div>"; return; }
-            list.innerHTML = done.map(q => `<div class="bg-white/50 p-2 rounded border border-gray-100 truncate">✅ ${q.songName}</div>`).join('');
-        }
+                <div class="${q.status==='singing' ? 'status-singing' : 'text-xs text-gray-300'}">
+                    ${q.status==='singing' ? '正在咩咩唱 🎤' : '等待中'}
+                </div>
+            </div>
+        `).join(''); }
+        function renderDoneList() { const list = document.getElementById('doneList'); const done = queue.filter(q => q.status === 'completed'); if(done.length === 0) { list.innerHTML = "<div class='col-span-full'>今日尚未有演唱紀錄</div>"; return; } list.innerHTML = done.map(q => `<div class="bg-white/50 p-2 rounded border border-gray-100 truncate">✅ ${q.songName}</div>`).join(''); }
         function openRequestModal(id) { selectedSong = songs.find(s => s.id === id); document.getElementById('targetSongName').innerText = selectedSong.name; document.getElementById('requestModal').classList.add('active'); }
-        document.getElementById('confirmRequestBtn').onclick = () => {
-            const name = document.getElementById('requesterName').value; if(!name) { alert('暱稱必填唷！'); return; }
-            db.ref('queue').push({ songId: selectedSong.id, songName: selectedSong.name, requester: name, message: document.getElementById('requestMsg').value, status: 'queued', time: Date.now() });
-            closeModals(); showToast('點歌成功，咩花糖收到囉！');
-        };
-        function renderAdminQueue() {
-            const active = queue.filter(q => q.status !== 'completed');
-            document.getElementById('adminQueueList').innerHTML = active.map(q => `
-                <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
-                    <div class="flex justify-between font-bold"><span>${q.songName}</span><span class="text-xs text-blue-400">by ${q.requester}</span></div>
-                    <div class="mt-2 text-sm bg-white p-2 rounded text-gray-500 italic">💬 對咩花糖說：${q.message || '（無留言）'}</div>
-                    <div class="mt-3 flex gap-2">
-                        <button class="flex-1 bg-blue-400 text-white py-2 rounded-lg text-xs font-bold" onclick="db.ref('queue/${q.id}').update({status:'singing'})">開始唱</button>
-                        <button class="flex-1 bg-pink-400 text-white py-2 rounded-lg text-xs font-bold" onclick="completeSong('${q.id}', '${q.songId}')">唱完囉</button>
-                        <button class="bg-gray-200 text-gray-500 px-3 py-2 rounded-lg text-xs" onclick="db.ref('queue/${q.id}').remove()">移除</button>
-                    </div>
+        document.getElementById('confirmRequestBtn').onclick = () => { const name = document.getElementById('requesterName').value; if(!name) { alert('暱稱必填唷！'); return; } db.ref('queue').push({ songId: selectedSong.id, songName: selectedSong.name, requester: name, message: document.getElementById('requestMsg').value, status: 'queued', time: Date.now() }); closeModals(); showToast('點歌成功，咩花糖收到囉！'); };
+        function renderAdminQueue() { const active = queue.filter(q => q.status !== 'completed'); document.getElementById('adminQueueList').innerHTML = active.map(q => `
+            <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                <div class="flex justify-between font-bold"><span>${q.songName}</span><span class="text-xs text-blue-400">by ${q.requester}</span></div>
+                <div class="mt-2 text-sm bg-white p-2 rounded text-gray-500 italic">💬 對咩花糖說：${q.message || '（無留言）'}</div>
+                <div class="mt-3 flex gap-2">
+                    <button class="flex-1 bg-blue-400 text-white py-2 rounded-lg text-xs font-bold" onclick="db.ref('queue/${q.id}').update({status:'singing'})">開始唱</button>
+                    <button class="flex-1 bg-pink-400 text-white py-2 rounded-lg text-xs font-bold" onclick="completeSong('${q.id}', '${q.songId}')">唱完囉</button>
+                    <button class="bg-gray-200 text-gray-500 px-3 py-2 rounded-lg text-xs" onclick="db.ref('queue/${q.id}').remove()">移除</button>
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join(''); }
         function completeSong(queueId, songId) { db.ref('queue/' + queueId).update({ status: 'completed' }); if(songId) { db.ref('songs/' + songId + '/count').transaction(c => (c || 0) + 1); } }
         function clearDoneQueue() { if(!confirm('要清空紀錄嗎？')) return; queue.filter(q => q.status === 'completed').forEach(item => { db.ref('queue/' + item.id).remove(); }); showToast('已歸零'); }
         function forceUpdate() { render(); showToast('已刷新'); }
-        function renderAdminSongs() {
-            document.getElementById('adminSongsList').innerHTML = songs.map(s => `
-                <div class="flex justify-between p-2 border-b hover:bg-gray-50 items-center ${s.hidden ? 'opacity-40 bg-gray-100' : ''}">
-                    <span>${s.name} <small class="text-gray-400">(${s.artist || '無'})</small></span>
-                    <div class="flex gap-2">
-                        <button class="text-[10px] px-2 py-1 rounded border ${s.hidden ? 'bg-gray-500 text-white' : 'border-gray-300 text-gray-500'}" onclick="db.ref('songs/${s.id}').update({hidden:${!s.hidden}})">${s.hidden ? '🙈 隱藏中' : '👁️ 顯示中'}</button>
-                        <button class="text-red-300 text-xs" onclick="if(confirm('確定刪除？')) db.ref('songs/${s.id}').remove()">❌</button>
-                    </div>
+        function renderAdminSongs() { document.getElementById('adminSongsList').innerHTML = songs.map(s => `
+            <div class="flex justify-between p-2 border-b hover:bg-gray-50 items-center ${s.hidden ? 'opacity-40 bg-gray-100' : ''}">
+                <span>${s.name} <small class="text-gray-400">(${s.artist || '無'})</small></span>
+                <div class="flex gap-2">
+                    <button class="text-[10px] px-2 py-1 rounded border ${s.hidden ? 'bg-gray-500 text-white' : 'border-gray-300 text-gray-500'}" onclick="db.ref('songs/${s.id}').update({hidden:${!s.hidden}})">${s.hidden ? '🙈 隱藏中' : '👁️ 顯示中'}</button>
+                    <button class="text-red-300 text-xs" onclick="if(confirm('確定刪除？')) db.ref('songs/${s.id}').remove()">❌</button>
                 </div>
-            `).join('');
-        }
-        function saveSong() {
-            const name = document.getElementById('editName').value; const artist = document.getElementById('editArtist').value;
-            const tags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(el => el.value);
-            if(!name) return; db.ref('songs').push({ name, artist, tags, count: 0 });
-            document.getElementById('editName').value = ''; document.getElementById('editArtist').value = '';
-            document.querySelectorAll('.tag-checkbox').forEach(el => el.checked = false); closeModals();
-        }
+            </div>
+        `).join(''); }
+        function saveSong() { const name = document.getElementById('editName').value; const artist = document.getElementById('editArtist').value; const tags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(el => el.value); if(!name) return; db.ref('songs').push({ name, artist, tags, count: 0 }); document.getElementById('editName').value = ''; document.getElementById('editArtist').value = ''; document.querySelectorAll('.tag-checkbox').forEach(el => el.checked = false); closeModals(); }
         document.getElementById('searchInput').oninput = e => { searchQuery = e.target.value; renderAudienceSongs(); };
         document.querySelectorAll('.filter-btn').forEach(btn => { btn.onclick = function() { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); currentFilter = this.dataset.filter; renderAudienceSongs(); }; });
         function toggleMode() { document.getElementById('passwordModal').classList.add('active'); }
