@@ -1,115 +1,221 @@
-<!DOCTYPE html><html lang="zh-TW"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>🎤 咩花糖點歌系統 ♪</title>    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">    <script src="https://cdn.tailwindcss.com"></script>    <link rel="icon" href="icon.png" type="image/png">    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <style>        
-        /* 樣式修正：改為淺粉與淺藍配色 */
-        * { margin: 0; padding: 0; box-sizing: border-box; }        
-        body { font-family: 'Noto Sans TC', 'Poppins', sans-serif; background: linear-gradient(135deg, #F0F8FF 0%, #FFF0F5 100%); color: #6B5B95; min-height: 100vh; }        
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }                
-        
-        /* Header：淺藍到淺粉漸層 */
-        .header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #B9E2FA 0%, #FBCBF3 100%); border-radius: 0 0 30px 30px; box-shadow: 0 4px 20px rgba(185, 226, 250, 0.4); margin-bottom: 30px; }        
+<!DOCTYPE html><html lang="zh-TW"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>☁️ 咩花糖的點歌系統 ♪</title>    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">    <script src="https://cdn.tailwindcss.com"></script>    <link rel="icon" href="icon.png" type="image/png">    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans TC', 'Poppins', sans-serif; background: linear-gradient(135deg, #F0F8FF 0%, #FFF0F5 100%); color: #6B5B95; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        /* 頂部漸層：淺藍到淺粉 */
+        .header { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #B9E2FA 0%, #FBCBF3 100%); border-radius: 0 0 30px 30px; box-shadow: 0 4px 20px rgba(185, 226, 250, 0.4); margin-bottom: 30px; }
         .header h1 { font-size: 2.2rem; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
-        .section-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; }                
-        
-        /* 輸入框邊框改為淺藍 */
-        .search-input { width: 100%; padding: 12px 20px; border: 2px solid #E0F2FE; border-radius: 15px; margin-bottom: 15px; outline: none; transition: 0.3s; }        
-        .search-input:focus { border-color: #B9E2FA; box-shadow: 0 0 10px rgba(185,226,250,0.3); }                
-        
-        /* 按鈕改為淺藍色調 */
-        .filter-btn { padding: 8px 18px; border: 2px solid #B9E2FA; background: white; color: #7AB8D9; border-radius: 25px; cursor: pointer; transition: all 0.3s; font-weight: 600; font-size: 0.9rem; }        
+        .section-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; }
+        .search-input { width: 100%; padding: 12px 20px; border: 2px solid #E0F2FE; border-radius: 15px; margin-bottom: 15px; outline: none; transition: 0.3s; }
+        .search-input:focus { border-color: #B9E2FA; box-shadow: 0 0 10px rgba(185,226,250,0.3); }
+        .filter-btn { padding: 8px 18px; border: 2px solid #B9E2FA; background: white; color: #7AB8D9; border-radius: 25px; cursor: pointer; transition: all 0.3s; font-weight: 600; font-size: 0.9rem; }
         .filter-btn.active { background: #B9E2FA; color: white; }
-
-        .songs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }        
-        .song-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 2px solid transparent; transition: all 0.3s; display: flex; flex-direction: column; justify-content: space-between; }        
-        .song-card:hover { transform: translateY(-5px); border-color: #FBCBF3; }                
-        
-        /* 點歌按鈕：甜美漸層 */
+        .songs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .song-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 2px solid transparent; transition: all 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
+        .song-card:hover { transform: translateY(-5px); border-color: #FBCBF3; }
         .request-btn { width: 100%; padding: 12px; border: none; border-radius: 15px; background: linear-gradient(135deg, #B9E2FA 0%, #FBCBF3 100%); color: white; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; box-shadow: 0 4px 10px rgba(251, 203, 243, 0.4); }
-
-        .status-singing { background: #E0F2FE; color: #7AB8D9; animation: pulse 2s infinite; border-radius: 10px; padding: 4px 10px; font-weight: 600; }        
+        .status-singing { background: #E0F2FE; color: #7AB8D9; animation: pulse 2s infinite; border-radius: 10px; padding: 4px 10px; font-weight: 600; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }        
-        .modal.active { display: flex; }        
-        .modal-content { background: white; border-radius: 25px; padding: 30px; max-width: 450px; width: 90%; }        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 25px; padding: 30px; max-width: 450px; width: 90%; }
         .form-input { width: 100%; padding: 14px; border: 2px solid #F0F9FF; border-radius: 15px; margin-top: 10px; outline: none; }
-
-        .tag-chip { padding: 6px 15px; border: 2px solid #F0F9FF; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: 0.3s; }        
-        .tag-checkbox { display: none; }        
+        .tag-chip { padding: 6px 15px; border: 2px solid #F0F9FF; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: 0.3s; }
+        .tag-checkbox { display: none; }
         .tag-checkbox:checked + .tag-chip { background: #FBCBF3; border-color: #FBCBF3; color: white; }
-
-        .mode-switch { position: fixed; bottom: 20px; left: 20px; z-index: 1000; opacity: 0.4; }        
-        .mode-btn { background: #6B5B95; color: white; padding: 10px 18px; border-radius: 50px; cursor: pointer; border: none; font-size: 0.8rem; }        
+        .mode-switch { position: fixed; bottom: 20px; left: 20px; z-index: 1000; opacity: 0.4; }
+        .mode-btn { background: #6B5B95; color: white; padding: 10px 18px; border-radius: 50px; cursor: pointer; border: none; font-size: 0.8rem; }
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #7AB8D9; color: white; padding: 12px 30px; border-radius: 50px; display: none; z-index: 3000; }
-        
-        /* 文字配色微調 */
         .text-pink-400 { color: #FBCBF3 !important; }
         .text-pink-300 { color: #B9E2FA !important; }
         .bg-pink-50 { background-color: #F0F9FF !important; }
-    </style></head><body>
-    <div class="header">        <h1 onclick="toggleMode()" style="cursor: default;">🎤 咩花糖點歌系統 ♪</h1>    </div>
-    <div class="container">        <div id="audienceView">            <div class="section-card">                <h3 class="font-bold mb-3 text-pink-400 text-lg flex items-center">🎵 目前排隊清單</h3>                <div id="queueList" class="space-y-2 text-gray-400">載入中...</div>            </div>
-            <div class="section-card bg-gray-50/50">                <h3 class="font-bold mb-3 text-gray-400 text-md flex items-center cursor-pointer" onclick="document.getElementById('doneList').classList.toggle('hidden')">                    ✅ 今日已演唱歌曲 (點擊展開/收合)                </h3>                <div id="doneList" class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-gray-400 hidden">                    </div>            </div>
-            <div class="section-card">                <input type="text" id="searchInput" class="search-input" placeholder="🔍 搜尋歌名、歌手或關鍵字...">                <div id="filterButtons" class="flex gap-2 flex-wrap">                    <button class="filter-btn active" data-filter="all">全部</button>                    <button class="filter-btn" data-filter="中文歌">中文歌</button>                    <button class="filter-btn" data-filter="日文歌">日文歌</button>                    <button class="filter-btn" data-filter="英文歌">英文歌</button>                </div>            </div>
-            <div class="songs-grid" id="songsGrid"></div>        </div>
-        <div id="managementView" style="display:none;">            <div class="bg-white p-6 rounded-2xl mb-6 shadow-sm flex flex-wrap justify-between items-center gap-4">                <div>                    <h2 class="text-2xl font-bold">咩花糖管理後台 👑</h2>                    <p class="text-xs text-gray-400">資料即時同步中</p>                </div>                <div class="flex gap-2">                    <button class="bg-gray-400 text-white px-4 py-2 rounded-xl text-sm font-bold" onclick="forceUpdate()">🔄 重新整理資料庫</button>                    <button class="bg-red-300 text-white px-4 py-2 rounded-xl text-sm font-bold" onclick="clearDoneQueue()">🗑️ 清空今日已唱</button>                    <button class="bg-blue-300 text-white px-4 py-2 rounded-xl text-sm font-bold" onclick="openSongModal()">新增歌曲 +</button>                </div>            </div>                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">                <div class="bg-white p-6 rounded-2xl shadow-sm">                    <h3 class="font-bold mb-4 border-b pb-2">📋 待唱清單</h3>                    <div id="adminQueueList" class="space-y-4"></div>                </div>                <div class="bg-white p-6 rounded-2xl shadow-sm">                    <h3 class="font-bold mb-4 border-b pb-2">🎵 歌曲庫管理</h3>                    <div id="adminSongsList" class="space-y-1 text-sm overflow-y-auto max-h-[500px]"></div>                </div>            </div>        </div>    </div>
-    <div class="modal" id="requestModal">        <div class="modal-content">            <h3 class="text-xl font-bold mb-2">點歌確認</h3>            <p id="targetSongName" class="text-pink-400 font-bold text-lg"></p>            <input type="text" id="requesterName" class="form-input" placeholder="你的暱稱 (必填)">            <textarea id="requestMsg" class="form-input h-24" placeholder="想對咩花糖說的話 (選填)"></textarea>            <button class="request-btn" id="confirmRequestBtn">確認點歌 ♪</button>            <button class="w-full mt-4 text-gray-400 text-sm" onclick="closeModals()">取消</button>        </div>    </div>
-    <div class="modal" id="songEditModal">        <div class="modal-content">            <h3 class="text-xl font-bold mb-4">新增歌曲</h3>            <input type="text" id="editName" class="form-input" placeholder="歌名">            <input type="text" id="editArtist" class="form-input" placeholder="歌手">            <div class="mt-4 text-sm font-bold text-gray-500">分類：</div>            <div class="flex gap-2 mt-2">                <label><input type="checkbox" class="tag-checkbox" value="中文歌"><span class="tag-chip">中文</span></label>                <label><input type="checkbox" class="tag-checkbox" value="日文歌"><span class="tag-chip">日文</span></label>                <label><input type="checkbox" class="tag-checkbox" value="英文歌"><span class="tag-chip">英文</span></label>            </div>            <button class="request-btn" onclick="saveSong()">上架</button>            <button class="w-full mt-4 text-gray-400 text-sm" onclick="closeModals()">取消</button>        </div>    </div>
-    <div class="modal" id="passwordModal">        <div class="modal-content">            <h3 class="text-xl font-bold mb-4">身份驗證</h3>            <input type="password" id="adminPwd" class="form-input" placeholder="請輸入管理密碼">            <button class="request-btn" onclick="checkPwd()">進入</button>        </div>    </div>
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 onclick="toggleMode()" style="cursor: default;">☁️ 咩花糖的點歌系統 ♪</h1>
+    </div>
+    <div class="container">
+        <div id="audienceView">
+            <div class="section-card">
+                <h3 class="font-bold mb-3 text-pink-400 text-lg flex items-center">🌸排隊中</h3>
+                <div id="queueList" class="space-y-2 text-gray-400">載入中...</div>
+            </div>
+
+            <div class="section-card bg-gray-50/50">
+                <h3 class="font-bold mb-3 text-gray-400 text-md flex items-center cursor-pointer" onclick="document.getElementById('doneList').classList.toggle('hidden')">
+                    ✅ 今日已演唱歌曲 (展開/收合)
+                </h3>
+                <div id="doneList" class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-gray-400 hidden"></div>
+            </div>
+
+            <div class="section-card">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 搜尋歌名、歌手或關鍵字...">
+                <div id="filterButtons" class="flex gap-2 flex-wrap">
+                    <button class="filter-btn active" data-filter="all">全部</button>
+                    <button class="filter-btn" data-filter="中文歌">中文歌</button>
+                    <button class="filter-btn" data-filter="日文歌">日文歌</button>
+                    <button class="filter-btn" data-filter="英文歌">英文歌</button>
+                </div>
+            </div>
+
+            <div class="songs-grid" id="songsGrid"></div>
+        </div>
+
+        <div id="managementView" style="display:none;">
+            <div class="bg-white p-6 rounded-2xl mb-6 shadow-sm flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold">咩花糖的小窩 🐏</h2>
+                    <p class="text-xs text-gray-400">資料即時同步中</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="bg-gray-400 text-white px-4 py-2 rounded-xl text-sm font-bold" onclick="forceUpdate()">🔄 重新整理</button>
+                    <button class="bg-red-300 text-white px-4 py-2 rounded-xl text-sm font-bold" onclick="clearDoneQueue()">🗑️ 清空已唱</button>
+                    <button class="bg-blue-300 text-white px-4 py-2 rounded-xl text-sm font-bold" onclick="openSongModal()">新增歌曲 +</button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm">
+                    <h3 class="font-bold mb-4 border-b pb-2">📋 待唱清單</h3>
+                    <div id="adminQueueList" class="space-y-4"></div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm">
+                    <h3 class="font-bold mb-4 border-b pb-2">🎵 歌曲管理</h3>
+                    <div id="adminSongsList" class="space-y-1 text-sm overflow-y-auto max-h-[500px]"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="requestModal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-2"> 點歌 🍬 </h3>
+            <p id="targetSongName" class="text-pink-400 font-bold text-lg"></p>
+            <input type="text" id="requesterName" class="form-input" placeholder="你的暱稱 (必填)">
+            <textarea id="requestMsg" class="form-input h-24" placeholder="想給咩花糖的留言"></textarea>
+            <button class="request-btn" id="confirmRequestBtn">確認點歌 ♪</button>
+            <button class="w-full mt-4 text-gray-400 text-sm" onclick="closeModals()">取消</button>
+        </div>
+    </div>
+
+    <div class="modal" id="songEditModal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4">加入新曲</h3>
+            <input type="text" id="editName" class="form-input" placeholder="歌名">
+            <input type="text" id="editArtist" class="form-input" placeholder="歌手">
+            <div class="mt-4 text-sm font-bold text-gray-500">分類：</div>
+            <div class="flex gap-2 mt-2">
+                <label><input type="checkbox" class="tag-checkbox" value="中文歌"><span class="tag-chip">中文</span></label>
+                <label><input type="checkbox" class="tag-checkbox" value="日文歌"><span class="tag-chip">日文</span></label>
+                <label><input type="checkbox" class="tag-checkbox" value="英文歌"><span class="tag-chip">英文</span></label>
+            </div>
+            <button class="request-btn" onclick="saveSong()">上架</button>
+            <button class="w-full mt-4 text-gray-400 text-sm" onclick="closeModals()">取消</button>
+        </div>
+    </div>
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4">身份驗證</h3>
+            <input type="password" id="adminPwd" class="form-input" placeholder="請輸入管理密碼">
+            <button class="request-btn" onclick="checkPwd()">進入</button>
+        </div>
+    </div>
     <div id="toast" class="toast"></div>
-    <script>        const firebaseConfig = {            apiKey: "AIzaSyAZr1jc23-EdgzDxUVMdRn-ROZ8ZWS_L5k",            authDomain: "vtuber-ktv.firebaseapp.com",            projectId: "vtuber-ktv",            storageBucket: "vtuber-ktv.firebasestorage.app",            messagingSenderId: "570327519718",            appId: "1:570327519718:web:0db4c15b94e7cad34a0627",            databaseURL: "https://vtuber-ktv-default-rtdb.firebaseio.com"        };
-        firebase.initializeApp(firebaseConfig);        const db = firebase.database();
-        let songs = [];        let queue = [];        let currentFilter = 'all';        let searchQuery = '';        let isManagementMode = false;        let selectedSong = null;
-
-        db.ref('songs').on('value', snap => {            const val = snap.val();            songs = val ? Object.keys(val).map(k => ({...val[k], id: k})) : [];            render();        });
-
-        db.ref('queue').on('value', snap => {            const val = snap.val();            queue = val ? Object.keys(val).map(k => ({...val[k], id: k})) : [];            render();        });
-
-        function render() {            renderAudienceSongs();            renderAudienceQueue();            renderDoneList();            if(isManagementMode) { renderAdminSongs(); renderAdminQueue(); }        }
-
-        function renderAudienceSongs() {            const grid = document.getElementById('songsGrid');            let filtered = songs.filter(s => !s.hidden);            if(currentFilter !== 'all') filtered = filtered.filter(s => s.tags && s.tags.includes(currentFilter));            if(searchQuery) {                const q = searchQuery.toLowerCase();                filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || (s.artist && s.artist.toLowerCase().includes(q)));            }            grid.innerHTML = filtered.map(s => `                <div class="song-card">                    <div>                        <div class="song-name">${s.name}</div>                        <div class="text-gray-400 text-sm mb-2">${s.artist || '未知歌手'}</div>                        <div class="flex gap-1 mb-2">${(s.tags || []).map(t => `<span class="px-2 py-0.5 bg-pink-50 text-pink-300 text-[10px] rounded-full">${t}</span>`).join('')}</div>                        <div class="text-[10px] text-gray-300">🎧 累計演唱：${s.count || 0} 次</div>                    </div>                    <button class="request-btn" onclick="openRequestModal('${s.id}')">點這首 ♪</button>                </div>            `).join('');        }
-
-        function renderAudienceQueue() {            const list = document.getElementById('queueList');            const active = queue.filter(q => q.status !== 'completed');            if(active.length === 0) { list.innerHTML = "目前沒人在排隊唷，快來點一首！"; return; }            list.innerHTML = active.map((q, i) => `                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-50">                    <div>                        <span class="font-bold text-pink-300 mr-2">#${i+1}</span>                        <span class="font-medium">${q.songName}</span>                        <span class="text-xs text-gray-400 ml-2">by ${q.requester}</span>                    </div>                    <div class="${q.status==='singing' ? 'status-singing' : 'text-xs text-gray-300'}">                        ${q.status==='singing' ? '正在演唱 🎤' : '等待中'}                    </div>                </div>            `).join('');        }
-
-        function renderDoneList() {            const list = document.getElementById('doneList');            const done = queue.filter(q => q.status === 'completed');            if(done.length === 0) { list.innerHTML = "<div class='col-span-full'>今日尚未有演唱紀錄</div>"; return; }            list.innerHTML = done.map(q => `                <div class="bg-white/50 p-2 rounded border border-gray-100 truncate" title="${q.songName}">                    ✅ ${q.songName}                </div>            `).join('');        }
-
-        function openRequestModal(id) {            selectedSong = songs.find(s => s.id === id);            document.getElementById('targetSongName').innerText = selectedSong.name;            document.getElementById('requestModal').classList.add('active');        }
-
-        document.getElementById('confirmRequestBtn').onclick = () => {            const name = document.getElementById('requesterName').value;            if(!name) { alert('暱稱必填唷！'); return; }            db.ref('queue').push({                 songId: selectedSong.id,                 songName: selectedSong.name,                 requester: name,                 message: document.getElementById('requestMsg').value,                 status: 'queued',                 time: Date.now()             });            closeModals(); showToast('點歌成功，咩花糖收到囉！');        };
-
-        function renderAdminQueue() {            const active = queue.filter(q => q.status !== 'completed');            document.getElementById('adminQueueList').innerHTML = active.map(q => `                <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">                    <div class="flex justify-between font-bold">                        <span>${q.songName}</span>                        <span class="text-xs text-blue-400">by ${q.requester}</span>                    </div>                    <div class="mt-2 text-sm bg-white p-2 rounded text-gray-500 italic">💬 對咩花糖說：${q.message || '（無留言）'}</div>                    <div class="mt-3 flex gap-2">                        <button class="flex-1 bg-blue-400 text-white py-2 rounded-lg text-xs font-bold" onclick="db.ref('queue/${q.id}').update({status:'singing'})">開始唱</button>                        <button class="flex-1 bg-pink-400 text-white py-2 rounded-lg text-xs font-bold" onclick="completeSong('${q.id}', '${q.songId}')">唱完囉</button>                        <button class="bg-gray-200 text-gray-500 px-3 py-2 rounded-lg text-xs" onclick="db.ref('queue/${q.id}').remove()">移除</button>                    </div>                </div>            `).join('');        }
-
-        function completeSong(queueId, songId) {            db.ref('queue/' + queueId).update({ status: 'completed' });            if(songId) {                const songRef = db.ref('songs/' + songId + '/count');                songRef.transaction(currentCount => (currentCount || 0) + 1);            }        }
-
-        function clearDoneQueue() {            if(!confirm('確定要清空今日已演唱的所有紀錄嗎？')) return;            const doneItems = queue.filter(q => q.status === 'completed');            doneItems.forEach(item => { db.ref('queue/' + item.id).remove(); });            showToast('今日紀錄已歸零');        }
-
-        function forceUpdate() { render(); showToast('資料已手動同步更新'); }
-
-        function renderAdminSongs() {            document.getElementById('adminSongsList').innerHTML = songs.map(s => `                <div class="flex justify-between p-2 border-b hover:bg-gray-50 items-center ${s.hidden ? 'opacity-40 bg-gray-100' : ''}">                    <span>${s.name} <small class="text-gray-400">(${s.artist || '無'})</small></span>                    <div class="flex gap-2">                        <button class="text-[10px] px-2 py-1 rounded border ${s.hidden ? 'bg-gray-500 text-white' : 'border-gray-300 text-gray-500'}" onclick="db.ref('songs/${s.id}').update({hidden:${!s.hidden}})">${s.hidden ? '🙈 隱藏中' : '👁️ 顯示中'}</button>                        <button class="text-red-300 text-xs" onclick="if(confirm('確定刪除？')) db.ref('songs/${s.id}').remove()">❌</button>                    </div>                </div>            `).join('');        }
-
-        function saveSong() {            const name = document.getElementById('editName').value;            const artist = document.getElementById('editArtist').value;            const tags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(el => el.value);            if(!name) return;            db.ref('songs').push({ name, artist, tags, count: 0 });            document.getElementById('editName').value = ''; document.getElementById('editArtist').value = '';            document.querySelectorAll('.tag-checkbox').forEach(el => el.checked = false);            closeModals();        }
-
-        document.getElementById('searchInput').oninput = e => { searchQuery = e.target.value; renderAudienceSongs(); };
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.onclick = function() {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active'); currentFilter = this.dataset.filter; renderAudienceSongs();
-            };
-        });
-
-        function toggleMode() { document.getElementById('passwordModal').classList.add('active'); }
-        function checkPwd() {
-            if(document.getElementById('adminPwd').value === 'pmdmnmkz4') {
-                isManagementMode = true;
-                document.getElementById('managementView').style.display = 'block';
-                document.getElementById('audienceView').style.display = 'none';
-                closeModals(); render();
-            } else { alert('密碼錯誤'); }
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyAZr1jc23-EdgzDxUVMdRn-ROZ8ZWS_L5k", authDomain: "vtuber-ktv.firebaseapp.com", projectId: "vtuber-ktv", storageBucket: "vtuber-ktv.firebasestorage.app", messagingSenderId: "570327519718", appId: "1:570327519718:web:0db4c15b94e7cad34a0627", databaseURL: "https://vtuber-ktv-default-rtdb.firebaseio.com" };
+        firebase.initializeApp(firebaseConfig); const db = firebase.database();
+        let songs = []; let queue = []; let currentFilter = 'all'; let searchQuery = ''; let isManagementMode = false; let selectedSong = null;
+        db.ref('songs').on('value', snap => { const val = snap.val(); songs = val ? Object.keys(val).map(k => ({...val[k], id: k})) : []; render(); });
+        db.ref('queue').on('value', snap => { const val = snap.val(); queue = val ? Object.keys(val).map(k => ({...val[k], id: k})) : []; render(); });
+        function render() { renderAudienceSongs(); renderAudienceQueue(); renderDoneList(); if(isManagementMode) { renderAdminSongs(); renderAdminQueue(); } }
+        function renderAudienceSongs() {
+            const grid = document.getElementById('songsGrid');
+            let filtered = songs.filter(s => !s.hidden);
+            if(currentFilter !== 'all') filtered = filtered.filter(s => s.tags && s.tags.includes(currentFilter));
+            if(searchQuery) { const q = searchQuery.toLowerCase(); filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || (s.artist && s.artist.toLowerCase().includes(q))); }
+            grid.innerHTML = filtered.map(s => `
+                <div class="song-card">
+                    <div>
+                        <div class="song-name font-bold" style="color:#7AB8D9">${s.name}</div>
+                        <div class="text-gray-400 text-sm mb-2">${s.artist || '未知歌手'}</div>
+                        <div class="flex gap-1 mb-2">${(s.tags || []).map(t => `<span class="px-2 py-0.5 bg-pink-50 text-pink-300 text-[10px] rounded-full">${t}</span>`).join('')}</div>
+                        <div class="text-[10px] text-gray-300">🎧 累計演唱：${s.count || 0} 次</div>
+                    </div>
+                    <button class="request-btn" onclick="openRequestModal('${s.id}')">就唱這首 ♪</button>
+                </div>
+            `).join('');
         }
+        function renderAudienceQueue() {
+            const list = document.getElementById('queueList');
+            const active = queue.filter(q => q.status !== 'completed');
+            if(active.length === 0) { list.innerHTML = "目前沒人在排隊唷，快來點一首！"; return; }
+            list.innerHTML = active.map((q, i) => `
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-50">
+                    <div>
+                        <span class="font-bold text-pink-300 mr-2">#${i+1}</span>
+                        <span class="font-medium">${q.songName}</span>
+                        <span class="text-xs text-gray-400 ml-2">by ${q.requester}</span>
+                    </div>
+                    <div class="${q.status==='singing' ? 'status-singing' : 'text-xs text-gray-300'}">
+                        ${q.status==='singing' ? '正在咩咩唱 🎤' : '等待中'}
+                    </div>
+                </div>
+            `).join('');
+        }
+        function renderDoneList() {
+            const list = document.getElementById('doneList');
+            const done = queue.filter(q => q.status === 'completed');
+            if(done.length === 0) { list.innerHTML = "<div class='col-span-full'>今日尚未有演唱紀錄</div>"; return; }
+            list.innerHTML = done.map(q => `<div class="bg-white/50 p-2 rounded border border-gray-100 truncate">✅ ${q.songName}</div>`).join('');
+        }
+        function openRequestModal(id) { selectedSong = songs.find(s => s.id === id); document.getElementById('targetSongName').innerText = selectedSong.name; document.getElementById('requestModal').classList.add('active'); }
+        document.getElementById('confirmRequestBtn').onclick = () => {
+            const name = document.getElementById('requesterName').value; if(!name) { alert('暱稱必填唷！'); return; }
+            db.ref('queue').push({ songId: selectedSong.id, songName: selectedSong.name, requester: name, message: document.getElementById('requestMsg').value, status: 'queued', time: Date.now() });
+            closeModals(); showToast('點歌成功，咩花糖收到囉！');
+        };
+        function renderAdminQueue() {
+            const active = queue.filter(q => q.status !== 'completed');
+            document.getElementById('adminQueueList').innerHTML = active.map(q => `
+                <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <div class="flex justify-between font-bold"><span>${q.songName}</span><span class="text-xs text-blue-400">by ${q.requester}</span></div>
+                    <div class="mt-2 text-sm bg-white p-2 rounded text-gray-500 italic">💬 對咩花糖說：${q.message || '（無留言）'}</div>
+                    <div class="mt-3 flex gap-2">
+                        <button class="flex-1 bg-blue-400 text-white py-2 rounded-lg text-xs font-bold" onclick="db.ref('queue/${q.id}').update({status:'singing'})">開始唱</button>
+                        <button class="flex-1 bg-pink-400 text-white py-2 rounded-lg text-xs font-bold" onclick="completeSong('${q.id}', '${q.songId}')">唱完囉</button>
+                        <button class="bg-gray-200 text-gray-500 px-3 py-2 rounded-lg text-xs" onclick="db.ref('queue/${q.id}').remove()">移除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        function completeSong(queueId, songId) { db.ref('queue/' + queueId).update({ status: 'completed' }); if(songId) { db.ref('songs/' + songId + '/count').transaction(c => (c || 0) + 1); } }
+        function clearDoneQueue() { if(!confirm('要清空紀錄嗎？')) return; queue.filter(q => q.status === 'completed').forEach(item => { db.ref('queue/' + item.id).remove(); }); showToast('已歸零'); }
+        function forceUpdate() { render(); showToast('已刷新'); }
+        function renderAdminSongs() {
+            document.getElementById('adminSongsList').innerHTML = songs.map(s => `
+                <div class="flex justify-between p-2 border-b hover:bg-gray-50 items-center ${s.hidden ? 'opacity-40 bg-gray-100' : ''}">
+                    <span>${s.name} <small class="text-gray-400">(${s.artist || '無'})</small></span>
+                    <div class="flex gap-2">
+                        <button class="text-[10px] px-2 py-1 rounded border ${s.hidden ? 'bg-gray-500 text-white' : 'border-gray-300 text-gray-500'}" onclick="db.ref('songs/${s.id}').update({hidden:${!s.hidden}})">${s.hidden ? '🙈 隱藏中' : '👁️ 顯示中'}</button>
+                        <button class="text-red-300 text-xs" onclick="if(confirm('確定刪除？')) db.ref('songs/${s.id}').remove()">❌</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        function saveSong() {
+            const name = document.getElementById('editName').value; const artist = document.getElementById('editArtist').value;
+            const tags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(el => el.value);
+            if(!name) return; db.ref('songs').push({ name, artist, tags, count: 0 });
+            document.getElementById('editName').value = ''; document.getElementById('editArtist').value = '';
+            document.querySelectorAll('.tag-checkbox').forEach(el => el.checked = false); closeModals();
+        }
+        document.getElementById('searchInput').oninput = e => { searchQuery = e.target.value; renderAudienceSongs(); };
+        document.querySelectorAll('.filter-btn').forEach(btn => { btn.onclick = function() { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); currentFilter = this.dataset.filter; renderAudienceSongs(); }; });
+        function toggleMode() { document.getElementById('passwordModal').classList.add('active'); }
+        function checkPwd() { if(document.getElementById('adminPwd').value === 'pmdmnmkz4') { isManagementMode = true; document.getElementById('managementView').style.display = 'block'; document.getElementById('audienceView').style.display = 'none'; closeModals(); render(); } else { alert('密碼錯誤'); } }
         function openSongModal() { document.getElementById('songEditModal').classList.add('active'); }
         function closeModals() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
-        function showToast(txt) {
-            const t = document.getElementById('toast');
-            t.innerText = txt; t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
-        }    </script></body></html>
+        function showToast(txt) { const t = document.getElementById('toast'); t.innerText = txt; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
+    </script>
+</body></html>
