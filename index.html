@@ -123,14 +123,16 @@
     </div>
     <div id="toast" class="toast"></div>
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyAZr1jc23-EdgzDxUVMdRn-ROZ8ZWS_L5k", authDomain: "vtuber-ktv.firebaseapp.com", projectId: "vtuber-ktv", storageBucket: "vtuber-ktv.firebasestorage.app", messagingSenderId: "570327519718", appId: "1:570327519718:web:0db4c15b94e7cad34a0627", databaseURL: "https://vtuber-ktv-default-rtdb.firebaseio.com" };
-        firebase.initializeApp(firebaseConfig); const db = firebase.database();
-        let songs = []; let queue = []; let currentFilter = 'all'; let searchQuery = ''; let isManagementMode = false; let selectedSong = null;
-        db.ref('songs').on('value', snap => { const val = snap.val(); songs = val ? Object.keys(val).map(k => ({...val[k], id: k})) : []; render(); });
-        db.ref('queue').on('value', snap => { const val = snap.val(); queue = val ? Object.keys(val).map(k => ({...val[k], id: k})) : []; render(); });
-        function render() { renderAudienceSongs(); renderAudienceQueue(); renderDoneList(); if(isManagementMode) { renderAdminSongs(); renderAdminQueue(); } }
-        function renderAudienceSongs() {
-            const grid = document.getElementById('songsGrid');
+        const firebaseConfig = {
+      apiKey: "AIzaSyC3kCYZt4goflbvOwLzQgafy_FueWSWnEw",
+      authDomain: "mehanatou.firebaseapp.com",
+      databaseURL: "https://mehanatou-default-rtdb.firebaseio.com",
+      projectId: "mehanatou",
+      storageBucket: "mehanatou.firebasestorage.app",
+      messagingSenderId: "403311169515",
+      appId: "1:403311169515:web:23d103c4a59cfbc86353ae",
+      measurementId: "G-CH5TWQTLMQ"
+    };
             let filtered = songs.filter(s => !s.hidden);
             if(currentFilter !== 'all') filtered = filtered.filter(s => s.tags && s.tags.includes(currentFilter));
             if(searchQuery) { const q = searchQuery.toLowerCase(); filtered = filtered.filter(s => s.name.toLowerCase().includes(q) || (s.artist && s.artist.toLowerCase().includes(q))); }
